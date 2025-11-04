@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CodeChakra | AI Career Guidance System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    :root {
+      --primary: #007bff;
+      --accent: #00b3b3;
+      --danger: #ff4b5c;
+      --dark-bg: #121212;
+      --light-bg: #f5f7fa;
+    }
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #f5f7fa, #dbe8ff);
+      color: #333;
+      overflow-x: hidden;
+      transition: all 0.4s ease;
+    }
+    body.dark-mode {
+      background: linear-gradient(135deg, #121212, #1e1e1e);
+      color: #f8f9fa;
+    }
+    header {
+      text-align: center;
+      padding: 60px 20px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #fff;
+      border-radius: 0 0 25px 25px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+      animation: slideIn 1s ease;
+    }
+    header h1 {
+      font-size: 2.8em;
+      letter-spacing: 1px;
+    }
+    header p {
+      font-size: 1.2em;
+      opacity: 0.9;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+    .section {
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(10px);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+    .dark-mode .section {
+      background: rgba(30,30,30,0.8);
+    }
+    .section:hover { transform: translateY(-5px); }
+    .section h2 { color: var(--primary); border-bottom: 2px solid var(--primary); padding-bottom: 8px; }
+    label { margin-top: 15px; font-weight: 600; }
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1em;
+    }
+    textarea { resize: none; }
+    .button-group {
+      display: flex; gap: 15px; margin-top: 25px;
+    }
+    button {
+      flex: 1;
+      padding: 14px;
+      font-weight: bold;
+      font-size: 1em;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    button:active {
+      transform: scale(0.95);
+      filter: brightness(1.2);
+    }
+    .submit-btn { background: linear-gradient(135deg, var(--primary), #003d80); color: #fff; }
+    .clear-btn { background: linear-gradient(135deg, var(--danger), #b30000); color: white; }
+    .export-btn { background: linear-gradient(135deg, #28a745, #1e7e34); color: white; }
+    .progress-bar {
+      height: 6px; background: var(--primary);
+      width: 0; border-radius: 4px; margin-top: 15px;
+      transition: width 0.5s ease;
+    }
+    .results { display: none; animation: fadeIn 1s ease forwards; }
+    .recommendation {
+      margin: 15px 0; padding: 15px;
+      border-left: 5px solid var(--primary);
+      background: rgba(245, 247, 250, 0.9);
+      border-radius: 10px;
+      animation: scaleIn 0.8s ease;
+    }
+    .dark-mode .recommendation { background: rgba(40,40,40,0.9); }
+    footer {
+      text-align: center; padding: 25px;
+      background: #343a40; color: #fff;
+      border-radius: 15px 15px 0 0; margin-top: 50px;
+    }
+    .dark-toggle {
+      position: fixed;
+      bottom: 25px; right: 25px;
+      background: var(--primary);
+      color: #fff;
+      padding: 15px;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      transition: transform 0.3s ease;
+    }
+    .dark-toggle:hover { transform: rotate(15deg) scale(1.1); }
+    @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
+    @keyframes scaleIn { from {transform: scale(0.9); opacity: 0;} to {transform: scale(1); opacity: 1;} }
+    @keyframes slideIn { from {transform: translateY(-50px); opacity: 0;} to {transform: translateY(0); opacity: 1;} }
+  </style>
+</head>
+<body>
+  <div class="dark-toggle"><i class="fas fa-moon"></i></div>
+
+  <header>
+    <h1 id="titleText"></h1>
+    <p>Empowering Students With AI-Driven Career Roadmaps</p>
+  </header>
+
+  <div class="container">
+    <div class="section">
+      <h2>Personal Information</h2>
+      <!-- Existing form section remains unchanged -->
+      <form id="careerForm">
+        <label>Full Name:</label>
+        <input type="text" id="name" required />
+        <label>Age:</label>
+        <input type="number" id="age" min="16" max="100" required />
+        <label>Education Level:</label>
+        <select id="education" required>
+          <option value="">Select</option>
+          <option value="highschool">High School</option>
+          <option value="bachelor">Bachelor's</option>
+          <option value="master">Master's</option>
+          <option value="phd">PhD</option>
+        </select>
+        <label>Years of Work Experience:</label>
+        <input type="number" id="experience" min="0" max="50" required />
+        <label>Current Skills:</label>
+        <textarea id="skills" placeholder="e.g., programming, leadership"></textarea>
+        <label>Interests:</label>
+        <div>
+          <input type="checkbox" value="technology"/> Technology
+          <input type="checkbox" value="business"/> Business
+          <input type="checkbox" value="art"/> Art
+          <input type="checkbox" value="science"/> Science
+          <input type="checkbox" value="health"/> Health
+          <input type="checkbox" value="others"/> others
+        </div>
+
+        <div class="form-group" style="grid-column: 1 / -1;">
+          <label for="aspirations"><i class="fas fa-lightbulb"></i> Career Aspirations:</label>
+          <textarea id="aspirations" placeholder="e.g., I want to lead teams in innovative projects or start my own company"></textarea>
+        </div>
+
+        <div class="quiz">
+          <h3><i class="fas fa-question-circle"></i> Aptitude Assessment Quiz</h3>
+          <p>Answer the following questions:</p>
+
+          <div class="quiz-item">
+            <p>1. Do you prefer working with data, logic, and problem-solving?</p>
+            <label><input type="radio" name="q1" value="yes" required> Yes</label>
+            <label><input type="radio" name="q1" value="no"> No</label>
+          </div>
+
+          <div class="quiz-item">
+            <p>2. Are you creative and enjoy designing visual elements or products?</p>
+            <label><input type="radio" name="q2" value="yes" required> Yes</label>
+            <label><input type="radio" name="q2" value="no"> No</label>
+          </div>
+
+          <div class="quiz-item">
+            <p>3. Do you thrive in social roles, helping others and collaborating in teams?</p>
+            <label><input type="radio" name="q3" value="yes" required> Yes</label>
+            <label><input type="radio" name="q3" value="no"> No</label>
+          </div>
+        </div>
+
+        <div class="progress-bar" id="progress"></div>
+
+        <div class="button-group">
+          <button type="submit" class="submit-btn"><i class="fas fa-robot"></i> Get AI Recommendations</button>
+          <button type="button" class="clear-btn" id="clearBtn"><i class="fas fa-sync-alt"></i> Clear</button>
+          <button type="button" class="export-btn" id="exportBtn"><i class="fas fa-file-download"></i> Export PDF</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="section results" id="results">
+      <h2>Your Personalized Career Insights</h2>
+      <div id="summary"></div>
+      <div id="recommendations"></div>
+    </div>
+
+    <!-- 🔹 New Web Information Section Added Below -->
+    <footer>
+    <div class="section" id="web-info">
+      <h2><i class="fas fa-globe"></i> Web Information</h2>
+      <p><strong>Website Developer:</strong> codechakra team</p>
+      <p><strong>Designation:</strong> Full Stack Web Developer</p>
+      <p><strong>Contact Email:</strong> <a href="anujs51707@gmail.com">anujs51707@gmail.com</a></p>
+      <p><strong>Contact Number:</strong> +91-9431629890</p>
+      <p><strong>Portfolio:</strong> <a href="https://codechakra.dev" target="_blank">https://codechakra.dev</a></p>
+      <p><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/codechakra" target="_blank">linkedin.com/in/code</a></p>
+        <p>© 2025 CodeChakra | AI Career Guidance. All rights reserved.</p>
+    </div>
+  </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script>
+    // Existing JavaScript (unchanged)
+    const form = document.getElementById('careerForm');
+    const results = document.getElementById('results');
+    const recDiv = document.getElementById('recommendations');
+    const summary = document.getElementById('summary');
+    const progress = document.getElementById('progress');
+    const toggle = document.querySelector('.dark-toggle');
+    const clearBtn = document.getElementById('clearBtn');
+    const exportBtn = document.getElementById('exportBtn');
+
+    const titleText = "CodeChakra (AI Career Guidance System) 💼";
+    let i = 0;
+    function typeTitle() {
+      if (i < titleText.length) {
+        document.getElementById("titleText").innerHTML += titleText.charAt(i);
+        i++;
+        setTimeout(typeTitle, 70);
+      }
+    }
+    typeTitle();
+
+    toggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      toggle.innerHTML = document.body.classList.contains('dark-mode') ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    });
+
+    form.addEventListener('input', () => {
+      const inputs = form.querySelectorAll('input, select, textarea');
+      const filled = [...inputs].filter(el => (el.type === 'checkbox' ? el.checked : el.value)).length;
+      progress.style.width = `${(filled / inputs.length) * 100}%`;
+    });
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const interests = [...document.querySelectorAll('input[type="checkbox"]:checked')].map(cb => cb.value);
+      const quiz = {};
+      document.querySelectorAll('input[type="radio"]:checked').forEach(radio => (quiz[radio.name] = radio.value));
+      const recs = generateRecommendations(interests, quiz);
+      recDiv.innerHTML = recs.html;
+      summary.innerHTML = `<h3><i class="fas fa-user-circle"></i> Snapshot</h3><p>${recs.summary}</p>`;
+      results.style.display = 'block';
+      confettiAnimation();
+      results.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    clearBtn.addEventListener('click', () => {
+      form.reset();
+      progress.style.width = '0%';
+      results.style.display = 'none';
+      recDiv.innerHTML = '';
+      summary.innerHTML = '';
+      clearBtn.style.background = '#ff1a1a';
+      setTimeout(() => clearBtn.style.background = 'linear-gradient(135deg, var(--danger), #b30000)', 500);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    exportBtn.addEventListener('click', () => {
+      exportBtn.style.background = '#2ecc71';
+      setTimeout(() => exportBtn.style.background = 'linear-gradient(135deg, #28a745, #1e7e34)', 500);
+      html2pdf().from(results).save('Career_Report.pdf');
+    });
+
+    function generateRecommendations(interests, quiz) {
+      const careers = [];
+      if (interests.includes('technology') && quiz.q1 === 'yes') {
+        careers.push({ title: 'Software Developer', salary: '₹6–18 LPA', skills: ['AI/ML', 'Cloud Computing', 'System Design'], link: 'https://www.coursera.org/browse/computer-science' });
+      }
+      if (interests.includes('business') && quiz.q3 === 'yes') {
+        careers.push({ title: 'Business Analyst', salary: '₹5–12 LPA', skills: ['Excel', 'Power BI', 'Data Interpretation'], link: 'https://www.udemy.com/topic/business-analysis/' });
+      }
+      careers.push({ title: 'Career Growth Strategist', salary: '₹8–20 LPA', skills: ['Goal Setting', 'Networking', 'Leadership Development'], link: 'https://www.linkedin.com/learning/topics/career-development' });
+      careers.push({ title: 'AI Career Coach', salary: '₹10–22 LPA', skills: ['AI Insights', 'Psychometric Analysis', 'Guidance Skills'], link: 'https://www.coursera.org/learn/career-coaching' });
+
+      const html = careers.map(c => `
+        <div class="recommendation">
+          <h3><i class="fas fa-briefcase"></i> ${c.title}</h3>
+          <p><strong>Salary:</strong> ${c.salary}</p>
+          <p><strong>Skills:</strong> ${c.skills.join(', ')}</p>
+          <p><a href="${c.link}" target="_blank">Explore Courses →</a></p>
+        </div>`).join('');
+
+      const summary = `You show a balanced aptitude for analytical reasoning, creativity, and leadership — ideal for hybrid digital-era careers.`;
+      return { html, summary };
+    }
+
+    function confettiAnimation() {
+      const duration = 1200;
+      const end = Date.now() + duration;
+      (function frame() {
+        const timeLeft = end - Date.now();
+        if (timeLeft <= 0) return;
+        const particle = document.createElement('div');
+        particle.style.position = 'fixed';
+        particle.style.width = '10px';
+        particle.style.height = '10px';
+        particle.style.background = `hsl(${Math.random()*360},70%,60%)`;
+        particle.style.top = '-10px';
+        particle.style.left = Math.random()*window.innerWidth+'px';
+        particle.style.borderRadius = '50%';
+        particle.style.animation = 'fall 1s linear forwards';
+        document.body.appendChild(particle);
+        setTimeout(() => particle.remove(), 1000);
+        requestAnimationFrame(frame);
+      })();
+    }
+  </script>
+</body>
+</html>
